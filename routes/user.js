@@ -4,7 +4,7 @@ import dotenv from "dotenv";
 import admin from "firebase-admin";
 import { initializeFirebase } from "../config/firebase.js";
 import { uploadFile } from "../helpers/firebaseStorageFileUpload.js";
-
+import db from "../config/db.js";
 dotenv.config();
 const router = express.Router();
 const upload = multer();
@@ -12,10 +12,10 @@ const upload = multer();
 // Initialize Firebase
 initializeFirebase();
 
-// Check if Firebase Admin SDK has been initialized
-if (!admin.apps.length) {
-    console.error('Firebase Admin SDK has not been initialized');
-}
+// // Check if Firebase Admin SDK has been initialized
+// if (!admin.apps.length) {
+//     console.error('Firebase Admin SDK has not been initialized');
+// }
 
 router.post('/upload', upload.single('image'), async (req, res) => {
     try {
@@ -35,8 +35,24 @@ router.post('/upload', upload.single('image'), async (req, res) => {
     }
 });
 
-router.post('/register', upload.single(), async (req, res) => {
+router.post('/register', upload.single('image'), async (req, res) => {
     try {
+        
+        const requestBodyData = req.body;
+        const valuesBody = {
+            fname : requestBodyData.firstName,
+            lname : requestBodyData.lastName,
+            email : requestBodyData.email,
+            profilePicture : "test",
+            password : requestBodyData.password
+        };
+        try {
+            const result = db.query("INSERT INTO users (f_name, l_name, email, profile_picture, password) VALUES ($1, $2, $3, $4, $5)", 
+            [valuesBody.fname, valuesBody.lname, valuesBody.email, valuesBody.profilePicture, valuesBody.password]);
+        } catch (error) {
+            
+        }
+
         console.log(requestBodyData);
         res.status(200).send(requestBodyData); // Send a 200 OK response with the request body data
     } catch (error) {
