@@ -1,1 +1,7 @@
 node_modules
+
+# Ignore database config file
+config/db.js
+
+# Ignore Firebase service account JSON file
+services/firebaseServiceAccount.json
