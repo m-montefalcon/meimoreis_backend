@@ -15,8 +15,14 @@ app.use(cors());
 app.use(express.json()); // Parse JSON bodies
 app.use(express.urlencoded({ extended: true })); // Parse URL-encoded bodies
 
+try {
+  db.connect();
+  console.log('Postgres Database Connected')
+} catch (error) {
+  console.log(`Database Error: ${error}`)
+  
+}
 
-db.connect();
 app.get('/', (req, res) => {
   res.setHeader('Access-Control-Allow-Origin', '*');
 
