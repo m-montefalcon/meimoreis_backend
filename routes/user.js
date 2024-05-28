@@ -7,6 +7,9 @@ import { uploadFile } from "../helpers/firebaseStorageFileUpload.js";
 import db from "../config/db.js";
 import { generateProfilePicFileExt } from "../helpers/generateFilename.js";
 import { generateProfilePictureDirectory } from "../helpers/folder_paths/profilePictureDirectory.js";
+import { authenticateUser } from "../auth/auth.js";
+import { authenticateToken } from "../middleware/middleware.js";
+import { generateJwtToken } from "../utils/token.js";
 import bcrypt from "bcrypt";
 
 
@@ -58,36 +61,27 @@ router.post('/login', async (req, res) => {
         if (!email ||!password) {
             return res.status(400).json({ error: 'Email and password are required' });
         }
-
-        // Retrieve user data from the database based on the email
-        const queryResult = await db.query("SELECT * FROM users WHERE email = $1", [email]);
-        
-        // Check if user with the provided email exists
-        if (queryResult.rows.length === 0) {
+        const user = await authenticateUser(email, password, res);
+        if (!user) {
             return res.status(401).json({ error: 'Invalid email or password' });
         }
-        
-        // Extract the hashed password from the query result
-        const hashedPassword = queryResult.rows[0].password;
+        // Generate JWT token
+        const token = generateJwtToken(user);
 
-        // Compare the provided password with the hashed password
-        const passwordMatch = await bcrypt.compare(password, hashedPassword);
-
-        // If passwords match, authentication successful
-        if (passwordMatch) {
-            return res.status(200).json({ message: 'Authentication successful' });
-        } else {
-            // If passwords don't match, authentication failed
-            return res.status(401).json({ error: 'Invalid email or password' });
-        }
+        // Send token in response
+        return res.status(200).json({ token: token });
+       
     } catch (error) {
         console.error(error);
         return res.status(500).json({ error: 'Internal Server Error' });
     }
-    res.send(req.body);
 
 });
 
+// Protected route example
+router.get('/protected', authenticateToken, (req, res) => {
+    res.status(200).json({ message: 'Protected route accessed', user: req.user });
+});
 
 
 export default router;
