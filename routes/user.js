@@ -11,7 +11,7 @@ import { authenticateUser } from "../auth/auth.js";
 import { authenticateToken } from "../middleware/middleware.js";
 import { generateJwtToken } from "../utils/token.js";
 import bcrypt from "bcrypt";
-
+import { getUserDataQuery } from "../queries/getUserDataQuery.js";
 
 dotenv.config();
 const router = express.Router();
@@ -65,11 +65,15 @@ router.post('/login', async (req, res) => {
         if (!user) {
             return res.status(401).json({ error: 'Invalid email or password' });
         }
+         // Retrieve user data
+         const userData = await getUserDataQuery(email);
+         if (!userData) {
+             return res.status(401).json({ error: 'Invalid account' });
+         }
         // Generate JWT token
         const token = generateJwtToken(user);
-
         // Send token in response
-        return res.status(200).json({ token: token });
+        return res.status(200).json({ userData : userData , token: token });
        
     } catch (error) {
         console.error(error);
