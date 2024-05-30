@@ -12,11 +12,11 @@ import { authenticateToken } from "../middleware/middleware.js";
 import { generateJwtToken } from "../utils/token.js";
 import bcrypt from "bcrypt";
 import { getUserDataQuery } from "../queries/getUserDataQuery.js";
-
+import cookieParser from "cookie-parser";
 dotenv.config();
 const router = express.Router();
 const upload = multer();
-
+router.use(cookieParser());
 // Initialize Firebase
 initializeFirebase();
 
@@ -72,8 +72,12 @@ router.post('/login', async (req, res) => {
          }
         // Generate JWT token
         const token = generateJwtToken(user);
-        // Send token in response
-        return res.status(200).json({ userData : userData , token: token });
+
+        //Set HTTP-only cookie
+        res.cookie('jwtToken', token, { httpOnly: true });
+
+        // Send user data in response
+        return res.status(200).json({ userData: userData });
        
     } catch (error) {
         console.error(error);
