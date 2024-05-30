@@ -9,7 +9,12 @@ const app = express();
 
 const port = 8000;
 //Cors Origin 
-app.use(cors());
+app.use(cors({
+  origin: 'http://localhost:5173', // Allow requests from this origin
+  methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'], // Allow specified methods
+  allowedHeaders: ['Content-Type', 'Authorization'], // Allow specified headers
+  credentials: true // Allow credentials (cookies, authorization headers)
+}));
 
 // Middleware to log request body
 app.use(express.json()); // Parse JSON bodies
