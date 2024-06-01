@@ -2,6 +2,7 @@
 import express from "express";
 import db from "./config/db.js";
 import userRoutes from "./routes/user.js"
+import postRoutes from "./routes/post.js"
 import bodyParser from "body-parser";
 import cors from "cors";
 
@@ -37,6 +38,8 @@ app.get('/', (req, res) => {
 
 
 app.use('/user', userRoutes);
+app.use('/post', postRoutes);
+
 
 
 app.listen(port, () => {
