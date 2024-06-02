@@ -8,21 +8,22 @@ import { generatePostPictureDirectory } from "../helpers/folder_paths/postPictur
 import { postQuery } from "../queries/posts/postQuery.js";
 const upload = multer();
 
-router.post('/', upload.single('content_image'), authenticateToken, async(req, res)=>{
-    const { user_id, content} = req.body;
-    if (!user_id ||!content) {
+router.post('/', upload.single('contentImage'), authenticateToken, async(req, res)=>{
+    const { userId, content} = req.body;
+    console.log(req.body);
+    if (!userId ||!content) {
         return res.status(400).json({ error: 'All field must have values' });
     }
     try {
         const path = await generatePostPictureDirectory();
-        const image_url = await generatePostPictureFileExt(user_id);
+        const image_url = await generatePostPictureFileExt(userId);
     
         // Change the original name of the file
         const modifiedFile = req.file;
         modifiedFile.originalname = image_url; // Change the originalname property
         
         const storageFilePath = await uploadFile(modifiedFile, path);
-        const query = await postQuery(user_id, content, image_url); 
+        const query = await postQuery(userId, content, image_url); 
         if(!query) {
             res.status(500).send({error: "Error inserting data"});
         }

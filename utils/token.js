@@ -7,8 +7,7 @@ dotenv.config();
 
 const secretKey = process.env.JWT_SECRET_KEY;
 const generateJwtToken = (user) =>{
-    return JWT.sign({ userId: user.user_id, userEmail : user.email }, secretKey, { expiresIn: '1h' });
-
+    return JWT.sign({ userId: user.user_id, userEmail : user.email }, secretKey, { expiresIn: '3d' });
 };
 
 
