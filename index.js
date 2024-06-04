@@ -5,9 +5,10 @@ import userRoutes from "./routes/user.js"
 import postRoutes from "./routes/post.js"
 import bodyParser from "body-parser";
 import cors from "cors";
+import cookieParser from "cookie-parser";
 
 const app = express();
-
+app.use(cookieParser())
 const port = 8000;
 //Cors Origin 
 app.use(cors({
