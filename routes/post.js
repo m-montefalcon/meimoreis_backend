@@ -6,9 +6,13 @@ import { generatePostPictureFileExt } from "../helpers/generateFilename.js";
 import { uploadFile } from "../helpers/firebaseStorageFileUpload.js";
 import { generatePostPictureDirectory } from "../helpers/folder_paths/postPictureDirectory.js";
 import { postQuery } from "../queries/posts/postQuery.js";
+import { getQuery } from "../queries/posts/getQuery.js";
 const upload = multer();
 
-router.post('/', upload.single('contentImage'), authenticateToken, async(req, res)=>{
+
+router.use(authenticateToken);
+
+router.post('/', upload.single('contentImage'), async(req, res)=>{
     const { userId, content} = req.body;
     console.log(req.body);
     if (!userId ||!content) {
@@ -36,6 +40,17 @@ router.post('/', upload.single('contentImage'), authenticateToken, async(req, re
     }
    
 });
+
+router.get('/', async (req, res) => {
+    try {
+        const posts = await getQuery(); // Fetch posts using the getQuery function
+        res.json(posts); // Send the fetched posts as JSON response
+    } catch (error) {
+        console.error("Error fetching posts:", error);
+        res.status(500).json({ message: "Internal Server Error" }); // Send a generic error message with a 500 status code
+    }
+});
+
 
 
 
