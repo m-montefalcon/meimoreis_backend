@@ -3,6 +3,7 @@ import express from "express";
 import db from "./config/db.js";
 import userRoutes from "./routes/user.js"
 import postRoutes from "./routes/post.js"
+import likeRoutes from "./routes/like.js"
 import bodyParser from "body-parser";
 import cors from "cors";
 import cookieParser from "cookie-parser";
@@ -40,7 +41,7 @@ app.get('/', (req, res) => {
 
 app.use('/user', userRoutes);
 app.use('/post', postRoutes);
-
+app.use('/like', likeRoutes);
 
 
 app.listen(port, () => {
