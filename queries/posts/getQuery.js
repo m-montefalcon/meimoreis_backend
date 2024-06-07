@@ -26,7 +26,7 @@ const getQuery = async () => {
             GROUP BY
                 u.user_id,
                 p.post_id
-            ORDER BY p.post_id ASC;
+            ORDER BY p.timestamp DESC;
           `);
           
         return result.rows; 
