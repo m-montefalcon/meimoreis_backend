@@ -1,6 +1,11 @@
 import express from "express";
 import {postQuery} from "../queries/likes/postQuery.js"
+import db from "../config/db.js";
+import { authenticateToken } from "../middleware/middleware.js";
+
 const router = express.Router();
+
+router.use(authenticateToken)
 
 
 
