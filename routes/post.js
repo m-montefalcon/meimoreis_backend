@@ -7,6 +7,7 @@ import { uploadFile } from "../helpers/firebaseStorageFileUpload.js";
 import { generatePostPictureDirectory } from "../helpers/folder_paths/postPictureDirectory.js";
 import { postQuery } from "../queries/posts/postQuery.js";
 import { getQuery } from "../queries/posts/getQuery.js";
+import { getQueryByProfile } from "../queries/posts/getQueryByProfile.js";
 const upload = multer();
 
 
@@ -51,6 +52,17 @@ router.get('/', async (req, res) => {
     }
 });
 
+router.get('/:id', async (req, res) => {
+    const id = req.params.id
+    try {
+        const posts = await getQueryByProfile(id); // Fetch posts using the getQuery function
+        res.json(posts); // Send the fetched posts as JSON response
+    } catch (error) {
+        console.error("Error fetching posts:", error);
+        res.status(500).json({ message: "Internal Server Error" }); // Send a generic error message with a 500 status code
+    }
+
+});
 
 
 
