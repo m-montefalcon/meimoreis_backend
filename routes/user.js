@@ -54,37 +54,40 @@ router.post('/register', upload.single('image'), async (req, res) => {
 
 router.post('/login', async (req, res) => {
     try {
-        // Destructure email and password from request body
         const { email, password } = req.body;
 
-        // Check if email and password are defined
-        if (!email ||!password) {
+        // Check if email and password are provided
+        if (!email || !password) {
             return res.status(400).json({ error: 'Email and password are required' });
         }
-        const user = await authenticateUser(email, password, res);
+
+        // Authenticate user
+        const user = await authenticateUser(email, password);
         if (!user) {
             return res.status(401).json({ error: 'Invalid email or password' });
         }
-         // Retrieve user data
-         const userData = await getUserDataQuery(email);
-         if (!userData) {
-             return res.status(401).json({ error: 'Invalid account' });
-         }
+
+        // Get user data
+        const userData = await getUserDataQuery(email);
+        if (!userData) {
+            return res.status(401).json({ error: 'Invalid account' });
+        }
+
         // Generate JWT token
         const token = generateJwtToken(user);
 
-        //Set HTTP-only cookie
+        // Set HTTP-only cookie with JWT token
         res.cookie('jwtToken', token, { httpOnly: true });
 
-        // Send user data in response
+        // Send user data and token in response
         return res.status(200).json({ userData: userData });
-       
-    } catch (error) {
-        console.error(error);
-        return res.status(500).json({ error: 'Internal Server Error' });
-    }
 
+    } catch (error) {
+        throw error
+    }
 });
+
+
 
 router.post('/logout', authenticateToken, (req, res)=>{
     try {
