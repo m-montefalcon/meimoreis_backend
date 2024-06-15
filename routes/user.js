@@ -86,6 +86,18 @@ router.post('/login', async (req, res) => {
 
 });
 
+router.post('/logout', authenticateToken, (req, res)=>{
+    try {
+        // Clear the JWT cookie
+        res.clearCookie('jwt', { httpOnly: true });
+        res.status(200).send('Logged out successfully.');
+    } catch (error) {
+        console.error('Error clearing cookie:', error);
+        res.status(500).send('Error logging out.');
+    }
+})
+
+
 // Protected route example
 router.get('/protected', authenticateToken, (req, res) => {
     res.status(200).json({ message: 'Protected route accessed', user: req.user });
