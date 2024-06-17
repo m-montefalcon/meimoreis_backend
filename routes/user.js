@@ -92,7 +92,7 @@ router.post('/login', async (req, res) => {
 router.post('/logout', authenticateToken, (req, res)=>{
     try {
         // Clear the JWT cookie
-        res.clearCookie('jwt', { httpOnly: true });
+        res.clearCookie('jwtToken', { httpOnly: true });
         res.status(200).send('Logged out successfully.');
     } catch (error) {
         console.error('Error clearing cookie:', error);
